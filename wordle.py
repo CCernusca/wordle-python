@@ -66,14 +66,29 @@ def get_solution(letter_count_min: int|None = None, letter_count_max: int|None =
 
 def start_game() -> str:
     """
-    Starts the Wordle game and welcomes the player.
+    Starts a new game of Wordle.
+
+    Prompts the user to input the minimum and maximum number of letters the solution word should have.
+    Queries the Datamuse API with the RandomWords library to find a suitable word with the given length constraints.
+    If no suitable word is found after max_tries attempts, the function returns the last word that was queried.
+    Prints a welcome message and displays the solution word once it is found.
 
     Returns:
         str: The solution word for the game.
     """
-    solution = get_solution()
+    print(f"{green("Welcome")} {yellow("to")} {red("Wordle")}!")
 
-    print(f"{green("Welcome")} {yellow("to")} {red("Wordle")}! Try to guess the random {len(solution)}-letter word!")
+    while True:
+        min_letter_count = input("Enter the minimum number of letters for the solution word, or press Enter to use no constraint: ")
+        max_letter_count = input("Enter the maximum number of letters for the solution word, or press Enter to use no constraint: ")
+
+        print("Searching for a suitable word...")
+        solution = get_solution(int(min_letter_count) if min_letter_count != '' else None, int(max_letter_count) if max_letter_count != '' else None)
+
+        if solution is not None:
+            print("Suitable word found!")
+            break
+        print("No suitable word found. Please try again.")
 
     return solution
 
@@ -87,7 +102,7 @@ def game_loop(solution: str) -> int:
     tries = 1
 
     while True:
-        guess = input(f"Enter your {tries}. guess: ")
+        guess = input(f"Enter your {tries}. guess ({len(solution)} letters): ")
 
         if not validate_guess(guess, solution):
             print(f"Invalid guess. Please enter a {len(solution)}-letter word.")

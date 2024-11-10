@@ -106,16 +106,19 @@ def game_loop(solution: str) -> int:
 
         if not validate_guess(guess, solution):
             print(f"Invalid guess. Please enter a {len(solution)}-letter word.")
-            continue
+        else:
+            tries += 1
 
-        processed_guess = process_guess(guess, solution)
-        visualize_guess(processed_guess)
+            processed_guess = process_guess(guess, solution)
+            visualize_guess(processed_guess)
 
-        if all(status == '2' for _, status in processed_guess):
-            print(f"Congratulations! You won in {tries} tries!")
-            return tries
+            if all(status == '2' for _, status in processed_guess):
+                print(f"Congratulations! You won in {tries} tries!")
+                return tries
 
-        tries += 1
+        if input("Do you want to give up? (yes/no): ").lower() == 'yes':
+            print(f"The correct word was: {green(solution)}")
+            return float('inf')
 
 def validate_guess(guess: str, solution: str) -> bool:
     """

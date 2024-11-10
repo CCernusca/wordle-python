@@ -1,6 +1,6 @@
 
 # Libraries
-
+import pyfiglet
 
 # Functions
 
@@ -102,8 +102,37 @@ def validate_guess(guess: str, solution: str) -> bool:
     """
     return len(guess) == len(solution)
 
+def application_loop() -> None:
+    """
+    The main application loop for the Wordle game.
+
+    This function will run indefinitely until the user chooses to stop playing.
+    It will start a new game by calling start_game(), then run the game loop
+    by calling game_loop(). When the game loop ends, it will ask the user if
+    they want to play again. If the answer is 'yes', it will start a new game.
+    If the answer is anything else, it will break out of the loop and end the
+    application.
+    """
+    while True:
+        solution = start_game()
+        game_loop(solution)
+
+        play_again = input("Do you want to play again? (yes/no): ").lower()
+
+        if play_again.lower() != 'yes':
+            break
+
+def application_start() -> None:
+    """
+    Initializes and starts the Wordle application.
+
+    This function prints the game title using a stylized font and then
+    enters the main application loop to run the game.
+    """
+    print(pyfiglet.figlet_format("Wordle"))
+    
+    application_loop()
+
 # Main
 if __name__ == "__main__":
-    solution = start_game()
-
-    game_loop(solution)
+    application_start()

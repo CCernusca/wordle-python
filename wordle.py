@@ -1,6 +1,7 @@
 
 # Libraries
 import pyfiglet
+from random_word import RandomWords
 
 # Functions
 # Helper functions for printing colored text
@@ -41,14 +42,27 @@ def visualize_guess(processed_guess: list) -> str:
 
     print(' '.join([green(letter) if status == '2' else yellow(letter) if status == '1' else red(letter) for letter, status in processed_guess]))
 
-def get_solution() -> str:
+def get_solution(letter_count_min: int|None = None, letter_count_max: int|None = None, max_tries: int = 100) -> str|None:
     """
-    Retrieves the solution word for the game.
+    Gets a random word with a length between letter_count_min and letter_count_max (inclusive) by querying the
+    Datamuse API with the RandomWords library. If no suitable word is found after max_tries attempts, the function
+    returns the last word that was queried.
+
+    Args:
+        letter_count_min (int): The minimum number of letters the returned word should have. Defaults to 5.
+        letter_count_max (int): The maximum number of letters the returned word should have. Defaults to 5.
+        max_tries (int): The maximum number of times to query the API before returning the last queried word. Defaults to 100.
 
     Returns:
-        str: The solution word for the game.
+        str: A random word with a length between letter_count_min and letter_count_max (inclusive)
     """
-    return 'World'
+    word = RandomWords().get_random_word()
+    while (letter_count_min is not None and len(word) < letter_count_min) or (letter_count_max is not None and len(word) > letter_count_max):
+        max_tries -= 1
+        word = RandomWords().get_random_word()
+        if max_tries == 0:
+            return None
+    return word
 
 def start_game() -> str:
     """

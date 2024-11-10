@@ -3,7 +3,6 @@
 import pyfiglet
 
 # Functions
-
 # Helper functions for printing colored text
 def red(text: str) -> str:
     return '\x1b[31m' + text + '\x1b[0m'
@@ -64,7 +63,7 @@ def start_game() -> str:
 
     return solution
 
-def game_loop(solution: str) -> None:
+def game_loop(solution: str) -> int:
     """
     The main game loop for the Wordle game.
 
@@ -85,7 +84,7 @@ def game_loop(solution: str) -> None:
 
         if all(status == '2' for _, status in processed_guess):
             print(f"Congratulations! You won in {tries} tries!")
-            break
+            return tries
 
         tries += 1
 
@@ -106,16 +105,23 @@ def application_loop() -> None:
     """
     The main application loop for the Wordle game.
 
-    This function will run indefinitely until the user chooses to stop playing.
-    It will start a new game by calling start_game(), then run the game loop
-    by calling game_loop(). When the game loop ends, it will ask the user if
-    they want to play again. If the answer is 'yes', it will start a new game.
-    If the answer is anything else, it will break out of the loop and end the
-    application.
+    This function starts the game loop by calling start_game() and then enters
+    a loop where it repeatedly calls game_loop() to play a game, prints the
+    highscore at the end of each game, and asks the player if they want to play
+    again. The loop continues until the player chooses to quit.
+
+    The highscore is updated after each game if the player's score is higher than
+    the current highscore.
+
     """
+    highscore = float('inf')
+
     while True:
         solution = start_game()
-        game_loop(solution)
+        score = game_loop(solution)
+        print(f"Your highscore is: {green(str(score)) if score < highscore else yellow(str(score)) if score == highscore else red(str(highscore))}")
+        if score < highscore:
+            highscore = score
 
         play_again = input("Do you want to play again? (yes/no): ").lower()
 
